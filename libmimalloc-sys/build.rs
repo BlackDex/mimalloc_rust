@@ -3,9 +3,27 @@ use std::env;
 fn main() {
     let mut build = cc::Build::new();
 
-    build.include("c_src/mimalloc/include");
-    build.include("c_src/mimalloc/src");
-    build.file("c_src/mimalloc/src/static.c");
+    if cfg!(feature = "v1_dev") {
+        build.include("c_src/mimalloc_dev/include");
+        build.include("c_src/mimalloc_dev/src");
+        build.file("c_src/mimalloc_dev/src/static.c");
+    } else if cfg!(feature = "v1_custom") {
+        build.include("c_src/mimalloc_dev_custom/include");
+        build.include("c_src/mimalloc_dev_custom/src");
+        build.file("c_src/mimalloc_dev_custom/src/static.c");
+    } else if cfg!(feature = "v2_dev") {
+        build.include("c_src/mimalloc_dev_slice/include");
+        build.include("c_src/mimalloc_dev_slice/src");
+        build.file("c_src/mimalloc_dev_slice/src/static.c");
+    } else if cfg!(feature = "v2_custom") {
+        build.include("c_src/mimalloc_dev_slice_custom/include");
+        build.include("c_src/mimalloc_dev_slice_custom/src");
+        build.file("c_src/mimalloc_dev_slice_custom/src/static.c");
+    } else {
+        build.include("c_src/mimalloc/include");
+        build.include("c_src/mimalloc/src");
+        build.file("c_src/mimalloc/src/static.c");
+    }
 
     let target_os = env::var("CARGO_CFG_TARGET_OS").expect("target_os not defined!");
     let target_family = env::var("CARGO_CFG_TARGET_FAMILY").expect("target_family not defined!");
